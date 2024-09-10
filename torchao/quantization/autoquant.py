@@ -480,11 +480,13 @@ class AQFloatLinearWeight(torch.Tensor, AQMixin):
 class AQFloat8WeightOnlyQuantizedLinearWeight(AffineQuantizedTensor, AQMixin):
     """
     AutoQuantizable version of Float8WeightOnlyQuantizedLinearWeight
+    AutoQuantizable version of Float8WeightOnlyQuantizedLinearWeight
     """
+    target_dtype: torch.dtype = torch.float8_e4m3fn
     @classmethod
     def from_float(cls, weight):
         block_size = (1, weight.shape[1])
-        return super(AQFloat8WeightOnlyQuantizedLinearWeight, cls).from_hp_to_floatx(weight, block_size, target_dtype=torch.float8_e4m3fn, layout_type=Float8LayoutType())
+        return super(AQFloat8WeightOnlyQuantizedLinearWeight, cls).from_hp_to_floatx(weight, block_size, target_dtype=cls.target_dtype, layout_type=Float8LayoutType())
 
 # here we don't include int4 quantization in since int8 tends to be a better apples to apples comparison
 DEFAULT_AUTOQUANT_CLASS_LIST = [
@@ -495,11 +497,13 @@ DEFAULT_AUTOQUANT_CLASS_LIST = [
     # TODO this gets picked in places where it makes perf worse, why?
     AQInt8DynamicallyQuantizedLinearWeight,
     AQFloat8WeightOnlyQuantizedLinearWeight,
+    AQFloat8WeightOnlyQuantizedLinearWeight,
 ]
 
 DEFAULT_INT4_AUTOQUANT_CLASS_LIST = [
     AQFloatLinearWeight,
     AQInt8DynamicallyQuantizedLinearWeight,
+    AQInt4G64WeightOnlyQuantizedLinearWeight,
     AQInt4G64WeightOnlyQuantizedLinearWeight,
 ]
 
